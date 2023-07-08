@@ -1,4 +1,3 @@
-const { all } = require("express/lib/application");
 const workoutService = require("../services/workoutService");
 
 const getAllWorkouts = (req, res) => {
