@@ -22,13 +22,14 @@ const createNewWorkout = (newWorkout) => {
       timeZone: "UTC",
     }),
   };
+
   const createdWorkout = Workout.createNewWorkout(workoutToInsert);
   return createdWorkout;
 };
 
-const updateOneWorkout = (workoutId, workoutData) => {
+const updateOneWorkout = (workoutId, changes) => {
   const workoutToUpdate = {
-    ...workoutData,
+    ...changes,
     updateAt: new Date().toLocaleString("en-US", {
       timeZone: "UTC",
     }),
