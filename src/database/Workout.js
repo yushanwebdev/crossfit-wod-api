@@ -1,8 +1,41 @@
 const DB = require("./db.json");
 const { saveToDatabase } = require("./utils");
 
-const getAllWorkouts = () => {
-  return DB.workouts;
+const getAllWorkouts = (filterParams) => {
+  const PAGE_SIZE = 2;
+  let workouts = DB.workouts;
+
+  if (filterParams.mode) {
+    workouts = workouts.filter((workout) =>
+      workout.mode.toLowerCase().includes(filterParams.mode)
+    );
+  }
+  if (filterParams.equipment) {
+    workouts = workouts.filter((workout) =>
+      workout.equipment.includes(filterParams.equipment)
+    );
+  }
+  // sort=createdAt:asc
+  if (filterParams.sort) {
+    const [key, order] = filterParams.sort.split(":");
+    workouts = workouts.sort((a, b) => {
+      if (order === "asc") {
+        return new Date(a[key]) - new Date(b[key]);
+      } else {
+        return new Date(b[key]) - new Date(a[key]);
+      }
+    });
+  }
+  if (filterParams.length) {
+    workouts = workouts.slice(0, filterParams.length);
+  }
+  if (filterParams.page) {
+    const start = (filterParams.page - 1) * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
+    workouts = workouts.slice(start, end);
+  }
+
+  return workouts;
 };
 
 const getOneWorkout = (workoutId) => {
