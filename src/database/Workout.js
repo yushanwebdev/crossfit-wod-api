@@ -44,9 +44,11 @@ const getAllWorkouts = (filterParams) => {
   let workouts = DB.workouts;
 
   if (filterParams.mode) {
-    workouts = workouts.filter((workout) =>
-      workout.mode.toLowerCase().includes(filterParams.mode)
-    );
+    workouts = workouts.filter((workout) => {
+      return workout.mode
+        .toLowerCase()
+        .includes(filterParams.mode.toLowerCase());
+    });
   }
   if (filterParams.equipment) {
     workouts = workouts.filter((workout) =>
