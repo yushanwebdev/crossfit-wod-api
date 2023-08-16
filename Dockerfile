@@ -1,39 +1,47 @@
-# syntax = docker/dockerfile:1
+# base node image
+FROM node:16-bullseye-slim as base
 
-# Adjust NODE_VERSION as desired
-ARG NODE_VERSION=16.0.0
-FROM node:${NODE_VERSION}-slim as base
+# install all node_modules, including dev
+FROM base as deps
 
-LABEL fly_launch_runtime="Node.js"
+RUN mkdir /app/
+WORKDIR /app/
 
-# Node.js app lives here
-WORKDIR /app
+ADD package.json ./
+RUN npm install
 
-# Set production environment
-ENV NODE_ENV="production"
+# setup production node_modules
+FROM base as production-deps
 
+RUN mkdir /app/
+WORKDIR /app/
 
-# Throw-away build stage to reduce size of final image
+COPY --from=deps /app/node_modules /app/node_modules
+ADD package.json ./
+RUN npm prune --omit=dev
+
+# build app
 FROM base as build
 
-# Install packages needed to build node modules
-RUN apt-get update -qq && \
-    apt-get install -y build-essential pkg-config python
+RUN mkdir /app/
+WORKDIR /app/
 
-# Install node modules
-COPY --link package-lock.json package.json ./
-RUN npm ci
+COPY --from=deps /app/node_modules /app/node_modules
 
-# Copy application code
-COPY --link . .
-
-
-# Final stage for app image
+# build smaller image for running
 FROM base
 
-# Copy built application
-COPY --from=build /app /app
+ENV PORT="3000"
+ENV NODE_ENV="production"
 
-# Start the server by default, this can be overwritten at runtime
+RUN mkdir /app/
+WORKDIR /app/
+
+COPY --from=production-deps /app/node_modules /app/node_modules
+
+ADD . .
+
+# Expose port 3000
 EXPOSE 3000
-CMD [ "node", "index.js" ]
+
+CMD ["npm", "start"]
