@@ -20,6 +20,6 @@ You can identify the available endpoints by checking the [API docs](https://cros
 - [Express](https://expressjs.com/) - Web framework for Node.js
 - [Fly.io](https://fly.io/) - Platform for running full-stack apps globally
 
-## License
+## Inspiration
 
-This project is licensed under the MIT License. See the LICENSE file for more information.
+https://www.freecodecamp.org/news/rest-api-design-best-practices-build-a-rest-api/
