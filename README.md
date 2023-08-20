@@ -1,6 +1,6 @@
 # Crossfit WOD API
 
-This repository contains the code for a RESTful API that provides access to Crossfit WOD (Workout of the Day) data.
+A RESTful API that provides access to Crossfit WOD (Workout of the Day) data.
 
 ## Getting Started
 
